@@ -10,9 +10,11 @@ from .seresnet import SEResNet
 from .seresnext import SEResNeXt
 from .shufflenet_v1 import ShuffleNetV1
 from .shufflenet_v2 import ShuffleNetV2
+from .hrnet import HighResolutionNet
+from .hrnet_origin import HighResolutionNetOri
 
 __all__ = [
     'LeNet5', 'AlexNet', 'RegNet', 'ResNet', 'ResNeXt', 'ResNetV1d',
     'ResNetV1d', 'ResNet_CIFAR', 'SEResNet', 'SEResNeXt', 'ShuffleNetV1',
-    'ShuffleNetV2', 'MobileNetV2', 'MobileNetv3'
+    'ShuffleNetV2', 'MobileNetV2', 'MobileNetv3', 'HighResolutionNet', 'HighResolutionNetOri'
 ]
