@@ -15,7 +15,7 @@ model = dict(
         expand_ratio=4,
         kernel_sizes=[3, 5, 7],
         inverted_residual_setting=[
-            [1, [1], [64]],
+            [1, [2], [64]],
             [1, [1], [18]],
             [2, [2, 2], [18, 36]],
             [3, [2, 2, 2], [18, 36, 72]],
@@ -24,7 +24,7 @@ model = dict(
             [4, [2, 2, 2, 2], [18, 36, 72, 144]],
             [4, [2, 2, 2, 2], [18, 36, 72, 144]]
         ],
-        head_channels=[36, 72, 144, 288]),
+        head_channels=[72, 144, 288, 576]),
     neck=dict(type='GlobalAveragePooling'),
     head=dict(
         type='LinearClsHead',
