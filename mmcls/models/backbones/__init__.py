@@ -14,10 +14,11 @@ from .hrnet import HighResolutionNet
 from .hrnet_origin import HighResolutionNetOri
 from .hrnet_simple import HighResolutionNetSim
 from .hrnet_dilated import HighResolutionNetDia
+from .hrnet_atom import HighResolutionNetAtom
 
 __all__ = [
     'LeNet5', 'AlexNet', 'RegNet', 'ResNet', 'ResNeXt', 'ResNetV1d',
     'ResNetV1d', 'ResNet_CIFAR', 'SEResNet', 'SEResNeXt', 'ShuffleNetV1',
     'ShuffleNetV2', 'MobileNetV2', 'MobileNetv3',
-    'HighResolutionNet', 'HighResolutionNetOri', 'HighResolutionNetSim', 'HighResolutionNetDia'
+    'HighResolutionNet', 'HighResolutionNetOri', 'HighResolutionNetSim', 'HighResolutionNetDia', 'HighResolutionNetAtom'
 ]
