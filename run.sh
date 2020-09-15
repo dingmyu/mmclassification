@@ -1,1 +1,0 @@
-GPUS=32 ./tools/slurm_train.sh ad_lidar baseline configs/imagenet/hrnet.py result_hrnet

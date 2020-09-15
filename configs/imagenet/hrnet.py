@@ -3,33 +3,31 @@ model = dict(
     type='ImageClassifier',
     backbone=dict(
         type='HighResolutionNet',
-        active_fn='nn.ReLU6',
-        num_classes=1000,
-        input_channel=64,
-        last_channel=1280,
+        active_fn='nn.ReLU',
+        num_classes=19,
+        input_channel=[24, 24],
         width_mult=1.0,
         round_nearest=2,
         input_stride=4,
         bn_momentum=0.1,
-
         expand_ratio=4,
         kernel_sizes=[3, 5, 7],
         inverted_residual_setting=[
-            [1, [2], [64]],
-            [1, [1], [18]],
+            [1, [1], [24]],
             [2, [2, 2], [18, 36]],
-            [3, [2, 2, 2], [18, 36, 72]],
-            [3, [2, 2, 2], [18, 36, 72]],
-            [3, [2, 2, 2], [18, 36, 72]],
-            [4, [2, 2, 2, 2], [18, 36, 72, 144]],
-            [4, [2, 2, 2, 2], [18, 36, 72, 144]]
+            [3, [2, 2, 3], [18, 36, 72]],
+            [4, [2, 2, 3, 4], [18, 36, 72, 144]],
+            [4, [2, 2, 3, 4], [18, 36, 72, 144]]
         ],
-        head_channels=[72, 144, 288, 576]),
+        last_channel=90,
+        fcn_head_for_seg=True,
+        block='BasicBlock',
+        head_channels=None),
     neck=dict(type='GlobalAveragePooling'),
     head=dict(
         type='LinearClsHead',
-        num_classes=1000,
-        in_channels=1280,
+        num_classes=50,
+        in_channels=90,
         loss=dict(type='CrossEntropyLoss', loss_weight=1.0),
         topk=(1, 5),
     ))
@@ -75,7 +73,7 @@ data = dict(
         data_prefix='data/imagenet/val',
         ann_file='data/imagenet/meta/val.txt',
         pipeline=test_pipeline))
-evaluation = dict(interval=1, metric='accuracy')
+evaluation = dict(interval=10, metric='accuracy')
 
 # optimizer 32 GPUs, 32 * 64
 optimizer = dict(
@@ -90,10 +88,10 @@ lr_config = dict(
 total_epochs = 100
 
 # checkpoint saving
-checkpoint_config = dict(interval=1)
+checkpoint_config = dict(interval=10)
 # yapf:disable
 log_config = dict(
-    interval=100,
+    interval=50,
     hooks=[
         dict(type='TextLoggerHook'),
         # dict(type='TensorboardLoggerHook')
