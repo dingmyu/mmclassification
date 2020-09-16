@@ -1,2 +1,2 @@
 #GPUS=32 ./tools/slurm_train.sh ad_lidar baseline configs/imagenet/hrnet.py result_hrnet
-CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 PORT=29500 ./tools/dist_train.sh configs/imagenet/hrnet.py 8 --work-dir ./output/hrnet
+CUDA_VISIBLE_DEVICES=6,7 PORT=29500 ./tools/dist_train.sh configs/hrnet.py 2 --work-dir ./output/hrnet

@@ -48,7 +48,7 @@ train_pipeline = [
 ]
 test_pipeline = [
     dict(type='LoadImageFromFile'),
-    dict(type='Resize', size=256),
+    dict(type='Resize', size=(256, -1)),
     dict(type='CenterCrop', crop_size=224),
     dict(type='Normalize', **img_norm_cfg),
     dict(type='ImageToTensor', keys=['img']),
@@ -56,7 +56,7 @@ test_pipeline = [
     dict(type='Collect', keys=['img', 'gt_label'])
 ]
 data = dict(
-    samples_per_gpu=64,
+    samples_per_gpu=128,
     workers_per_gpu=2,
     train=dict(
         type=dataset_type,
@@ -73,25 +73,20 @@ data = dict(
         data_prefix='data/imagenet/val',
         ann_file='data/imagenet/meta/val.txt',
         pipeline=test_pipeline))
-evaluation = dict(interval=10, metric='accuracy')
+evaluation = dict(interval=1, metric='accuracy')
 
-# optimizer 32 GPUs, 32 * 64
-optimizer = dict(
-    type='SGD', lr=0.8, momentum=0.9, weight_decay=0.0001, nesterov=True)
+# optimizer 128 * 2
+optimizer = dict(type='SGD', lr=0.1, momentum=0.9, weight_decay=0.0001)
 optimizer_config = dict(grad_clip=None)
-lr_config = dict(
-    policy='step',
-    warmup='linear',
-    warmup_iters=2500,
-    warmup_ratio=0.25,
-    step=[30, 60, 90])
+# learning policy
+lr_config = dict(policy='CosineAnnealing', min_lr=0)
 total_epochs = 100
 
 # checkpoint saving
-checkpoint_config = dict(interval=10)
+checkpoint_config = dict(interval=25)
 # yapf:disable
 log_config = dict(
-    interval=50,
+    interval=100,
     hooks=[
         dict(type='TextLoggerHook'),
         # dict(type='TensorboardLoggerHook')
