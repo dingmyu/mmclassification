@@ -5,6 +5,7 @@ from .base_backbone import BaseBackbone
 import numbers
 import collections
 import logging
+import json
 import functools
 import torch
 from torch import nn
@@ -12,7 +13,7 @@ from torch.nn import functional as F
 from mmcls.models.backbones.transformer import Transformer
 
 checkpoint_kwparams = None
-# checkpoint_kwparams = json.load(open('checkpoint.json'))
+checkpoint_kwparams = json.load(open('checkpoint.json'))
 
 
 def resize(input,
@@ -50,6 +51,9 @@ class InvertedResidualChannels(nn.Module):
         self.active_fn = active_fn
 
         self.ops, self.pw_bn = self._build(channels, kernel_sizes, expand)
+
+        if self.use_res_connect:
+            self.transformer = Transformer(8, inp)
 
         if not self.use_res_connect:  # TODO(Mingyu): Add this residual
             # assert (self.input_dim % min(self.input_dim, self.output_dim) == 0
@@ -118,10 +122,12 @@ class InvertedResidualChannels(nn.Module):
             if not self.use_res_connect:
                 return self.residual(x)
             else:
+                x = self.transformer(x)
                 return x
         tmp = sum([op(x) for op in self.ops])
         tmp = self.pw_bn(tmp)
         if self.use_res_connect:
+            x = self.transformer(x)
             return x + tmp
         else:
             return self.residual(x) + tmp
@@ -428,7 +434,7 @@ class FuseModule(nn.Module):
         self.relu = functools.partial(nn.ReLU, inplace=False)
         if use_hr_format:
             block = ConvBNReLU  # See 2.
-        block = ConvBNReLU
+        # block = ConvBNReLU
 
         fuse_layers = []
         for i in range(out_branches if not self.use_hr_format else in_branches):

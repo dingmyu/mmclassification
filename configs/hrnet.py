@@ -4,7 +4,7 @@ model = dict(
     backbone=dict(
         type='HighResolutionNet',
         active_fn='nn.ReLU',
-        num_classes=19,
+        num_classes=50,
         input_channel=[24, 24],
         width_mult=1.0,
         round_nearest=2,
@@ -20,8 +20,8 @@ model = dict(
             [4, [2, 2, 3, 4], [18, 36, 72, 144]]
         ],
         last_channel=90,
-        fcn_head_for_seg=True,
-        block='BasicBlock',
+        fcn_head_for_seg=False,
+        block='InvertedResidualChannels',
         head_channels=None),
     neck=dict(type='GlobalAveragePooling'),
     head=dict(
@@ -73,7 +73,7 @@ data = dict(
         data_prefix='data/imagenet/val',
         ann_file='data/imagenet/meta/val.txt',
         pipeline=test_pipeline))
-evaluation = dict(interval=1, metric='accuracy')
+evaluation = dict(interval=25, metric='accuracy')
 
 # optimizer 128 * 2
 optimizer = dict(type='SGD', lr=0.1, momentum=0.9, weight_decay=0.0001)
