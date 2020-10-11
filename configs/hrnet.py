@@ -56,7 +56,7 @@ test_pipeline = [
     dict(type='Collect', keys=['img', 'gt_label'])
 ]
 data = dict(
-    samples_per_gpu=128,
+    samples_per_gpu=80,
     workers_per_gpu=2,
     train=dict(
         type=dataset_type,
@@ -73,7 +73,7 @@ data = dict(
         data_prefix='data/imagenet/val',
         ann_file='data/imagenet/meta/val.txt',
         pipeline=test_pipeline))
-evaluation = dict(interval=1, metric='accuracy')
+evaluation = dict(interval=5, metric='accuracy')
 
 # optimizer 128 * 2
 optimizer = dict(type='SGD', lr=0.1, momentum=0.9, weight_decay=0.0001)
@@ -86,7 +86,7 @@ total_epochs = 100
 checkpoint_config = dict(interval=25)
 # yapf:disable
 log_config = dict(
-    interval=100,
+    interval=20,
     hooks=[
         dict(type='TextLoggerHook'),
         # dict(type='TensorboardLoggerHook')
