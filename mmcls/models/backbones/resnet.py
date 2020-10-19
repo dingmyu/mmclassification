@@ -6,6 +6,7 @@ from mmcv.utils.parrots_wrapper import _BatchNorm
 
 from ..builder import BACKBONES
 from .base_backbone import BaseBackbone
+from mmcls.models.backbones.transformer import Transformer as TransformerToken
 
 
 class BasicBlock(nn.Module):
@@ -83,6 +84,10 @@ class BasicBlock(nn.Module):
         self.relu = nn.ReLU(inplace=True)
         self.downsample = downsample
 
+        self.use_transformer = True
+        if self.use_transformer is True and downsample is None:
+            self.transformer = TransformerToken(8, in_channels)
+
     @property
     def norm1(self):
         return getattr(self, self.norm1_name)
@@ -105,7 +110,8 @@ class BasicBlock(nn.Module):
 
             if self.downsample is not None:
                 identity = self.downsample(x)
-
+            if self.use_transformer is True and downsample is None:
+                identity = self.transformer(identity)
             out += identity
 
             return out
@@ -168,6 +174,10 @@ class Bottleneck(nn.Module):
         self.with_cp = with_cp
         self.conv_cfg = conv_cfg
         self.norm_cfg = norm_cfg
+
+        self.use_transformer = True
+        if self.use_transformer is True and downsample is None:
+            self.transformer = TransformerToken(8, in_channels)
 
         if self.style == 'pytorch':
             self.conv1_stride = 1
@@ -243,7 +253,8 @@ class Bottleneck(nn.Module):
 
             if self.downsample is not None:
                 identity = self.downsample(x)
-
+            if self.use_transformer is True and downsample is None:
+                identity = self.transformer(identity)
             out += identity
 
             return out

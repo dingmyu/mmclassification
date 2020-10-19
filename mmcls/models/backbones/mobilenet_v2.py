@@ -9,6 +9,7 @@ from torch.nn.modules.batchnorm import _BatchNorm
 from mmcls.models.utils import make_divisible
 from ..builder import BACKBONES
 from .base_backbone import BaseBackbone
+from mmcls.models.backbones.transformer import Transformer as TransformerToken
 
 
 class InvertedResidual(nn.Module):
@@ -49,7 +50,8 @@ class InvertedResidual(nn.Module):
         self.with_cp = with_cp
         self.use_res_connect = self.stride == 1 and in_channels == out_channels
         hidden_dim = int(round(in_channels * expand_ratio))
-
+        if self.use_res_connect:
+            self.transformer = TransformerToken(8, in_channels)
         layers = []
         if expand_ratio != 1:
             layers.append(
@@ -85,6 +87,7 @@ class InvertedResidual(nn.Module):
 
         def _inner_forward(x):
             if self.use_res_connect:
+                x = self.transformer(x)
                 return x + self.conv(x)
             else:
                 return self.conv(x)
