@@ -110,7 +110,7 @@ class BasicBlock(nn.Module):
 
             if self.downsample is not None:
                 identity = self.downsample(x)
-            if self.use_transformer is True and downsample is None:
+            if self.use_transformer is True and self.downsample is None:
                 identity = self.transformer(identity)
             out += identity
 
@@ -253,7 +253,7 @@ class Bottleneck(nn.Module):
 
             if self.downsample is not None:
                 identity = self.downsample(x)
-            if self.use_transformer is True and downsample is None:
+            if self.use_transformer is True and self.downsample is None:
                 identity = self.transformer(identity)
             out += identity
 
