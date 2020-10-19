@@ -50,7 +50,8 @@ class InvertedResidual(nn.Module):
         self.with_cp = with_cp
         self.use_res_connect = self.stride == 1 and in_channels == out_channels
         hidden_dim = int(round(in_channels * expand_ratio))
-        if self.use_res_connect:
+        self.use_transformer = True
+        if self.use_transformer and self.use_res_connect:
             self.transformer = TransformerToken(8, in_channels)
         layers = []
         if expand_ratio != 1:
@@ -87,7 +88,8 @@ class InvertedResidual(nn.Module):
 
         def _inner_forward(x):
             if self.use_res_connect:
-                x = self.transformer(x)
+                if self.use_transformer:
+                    x = self.transformer(x)
                 return x + self.conv(x)
             else:
                 return self.conv(x)

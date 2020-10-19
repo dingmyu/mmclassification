@@ -10,6 +10,7 @@ from torch.nn.modules.batchnorm import _BatchNorm
 from mmcls.models.utils import channel_shuffle
 from ..builder import BACKBONES
 from .base_backbone import BaseBackbone
+from mmcls.models.backbones.transformer import Transformer as TransformerToken
 
 
 class InvertedResidual(nn.Module):
@@ -43,6 +44,9 @@ class InvertedResidual(nn.Module):
         super(InvertedResidual, self).__init__()
         self.stride = stride
         self.with_cp = with_cp
+        self.use_transformer = True
+        if self.use_transformer:
+            self.transformer = TransformerToken(8, out_channels)
 
         branch_features = out_channels // 2
         if self.stride == 1:
@@ -119,7 +123,8 @@ class InvertedResidual(nn.Module):
                 out = torch.cat((x1, self.branch2(x2)), dim=1)
 
             out = channel_shuffle(out, 2)
-
+            if self.use_transformer:
+                out = self.transformer(out)
             return out
 
         if self.with_cp and x.requires_grad:
